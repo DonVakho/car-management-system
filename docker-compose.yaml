@@ -1,0 +1,48 @@
+services:
+  backend:
+    build:
+      context: .
+    container_name: application-backend-container
+    ports:
+      - 8080:8080
+    depends_on:
+      - postgres
+      - pgadmin
+    networks:
+      - spring-postgres
+    environment:
+      - spring.datasource.url=jdbc:postgresql://postgres:5432/cars
+      - spring.datasource.username=admin
+      - spring.datasource.password=pwd@@2
+
+  postgres:
+    image: postgres
+    container_name: postgres-container
+    restart: always
+    networks:
+      - spring-postgres
+    environment:
+      - POSTGRES_DB=cars
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=pwd@@2
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./sql/create_tables.sql:/docker-entrypoint-initdb.d/create_tables.sql
+      - ./sql/fill_tables.sql:/docker-entrypoint-initdb.d/fill_tables.sql
+  
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin-container
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=vdonadze@mail.com
+      - PGADMIN_DEFAULT_PASSWORD=pwd@@2
+    ports:
+      - '80:80'
+    networks:
+      - spring-postgres
+    depends_on:
+      - postgres
+
+networks:
+  spring-postgres:

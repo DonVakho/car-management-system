@@ -1,0 +1,21 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/cars
+    username: admin
+    password: pwd@@2
+    initialization-mode: always
+    initialize: true
+    continue-on-error: true
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        temp:
+          use_jdbc_metadata_defaults: false
+    hibernate:
+      ddl-auto: none
+      show-sql: true
+
+server:
+  servlet:
+    context-path: /api

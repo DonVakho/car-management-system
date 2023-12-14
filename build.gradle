@@ -1,0 +1,88 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+plugins {
+    id 'org.springframework.boot' version "$springboot_version"
+    id 'io.spring.dependency-management' version "$spring_dependency_management_version"
+    id 'org.jetbrains.kotlin.jvm' version "$kotlin_version"
+    id 'org.jetbrains.kotlin.plugin.spring' version "$kotlin_version"
+    id 'org.jetbrains.kotlin.plugin.jpa' version "$kotlin_version"
+    id "org.jlleitschuh.gradle.ktlint" version "$ktlint_version"
+
+}
+
+group = 'com.assignment'
+version = release_version
+
+java {
+    sourceCompatibility = '17'
+}
+
+ext {
+    kotlin_logging_version = '2.0.11'
+}
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-graphql'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
+    implementation 'org.jetbrains.kotlin:kotlin-reflect'
+    implementation "io.github.microutils:kotlin-logging-jvm:$kotlin_logging_version"
+
+    runtimeOnly 'org.postgresql:postgresql'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework:spring-webflux'
+    testImplementation 'org.springframework.graphql:spring-graphql-test'
+}
+
+tasks.withType(KotlinCompile) {
+    kotlinOptions {
+        freeCompilerArgs += '-Xjsr305=strict'
+        jvmTarget = '17'
+    }
+}
+
+jar {
+    enabled = false
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+tasks.getByPath("build").dependsOn("ktlintFormat")
+
+ktlint {
+    android = false
+    ignoreFailures = false
+    reporters {
+        reporter "plain"
+        reporter "checkstyle"
+    }
+}
+
+bootJar {
+    manifest {
+        attributes(
+                'Created-By': "${System.getProperty('java.version')} (${System.getProperty('java.vendor')})",
+                'Specification-Title': '',
+                'Specification-Vendor': 'Vakhtang Donadze LLC',
+                'Implementation-Title': project.archivesBaseName,
+                'Implementation-Vendor': 'Vakhtang Donadze LLC',
+                'Implementation-Vendor-Id': 'com.vakhtang.donadze',
+                'Implementation-Version': project.version
+        )
+    }
+}

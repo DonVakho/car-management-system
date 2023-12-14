@@ -1,0 +1,35 @@
+extend type Query {
+    listCars: [GetCarDto]!
+    getCar(id: String): GetCarDto
+}
+
+extend type Mutation {
+    addCar(addCarDto: AddCarDto!): GetCarDto
+    updateCar(id: String, updateCarDto: UpdateCarDto!): GetCarDto
+    deleteCar(id: String!): Boolean
+}
+
+type GetCarDto {
+    id: String!
+    brand: String!
+    model: String!
+    color: String!
+    price: Float!
+    yearOfProduction: Int!
+}
+
+input AddCarDto {
+    brand: String!
+    model: String!
+    color: String!
+    price: Float!
+    yearOfProduction: Int!
+}
+
+input UpdateCarDto {
+    brand: String
+    model: String
+    color: String
+    price: Float
+    yearOfProduction: Int
+}
